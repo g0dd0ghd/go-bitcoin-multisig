@@ -2,15 +2,15 @@
 package multisig
 
 import (
+	"github.com/g0dd0ghd/go-bitcoin-multisig/btcutils"
 	"github.com/prettymuchbryce/hellobitcoin/base58check"
-	"github.com/chainx-org/go-bitcoin-multisig/btcutils"
 
 	"encoding/hex"
 	"fmt"
 	"log"
 )
 
-//OutputKeys formats and prints relevant outputs to the user.
+// OutputKeys formats and prints relevant outputs to the user.
 func OutputKeys(flagKeyCount int, flagConcise bool) {
 	if flagKeyCount < 1 || flagKeyCount > 100 {
 		log.Fatal("--count <count> must be between 1 and 100")

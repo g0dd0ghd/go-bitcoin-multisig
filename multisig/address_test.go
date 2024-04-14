@@ -1,8 +1,9 @@
 package multisig
 
 import (
-	"github.com/chainx-org/go-bitcoin-multisig/testutils"
 	"testing"
+
+	"github.com/g0dd0ghd/go-bitcoin-multisig/testutils"
 )
 
 func TestGenerateAddress(t *testing.T) {

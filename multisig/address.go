@@ -4,8 +4,8 @@
 package multisig
 
 import (
+	"github.com/g0dd0ghd/go-bitcoin-multisig/btcutils"
 	"github.com/prettymuchbryce/hellobitcoin/base58check"
-	"github.com/chainx-org/go-bitcoin-multisig/btcutils"
 
 	"encoding/csv"
 	"encoding/hex"
@@ -14,7 +14,7 @@ import (
 	"strings"
 )
 
-//OutputAddress formats and prints relevant outputs to the user.
+// OutputAddress formats and prints relevant outputs to the user.
 func OutputAddress(flagM int, flagN int, flagPublicKeys string) {
 	P2SHAddress, redeemScriptHex := generateAddress(flagM, flagN, flagPublicKeys)
 

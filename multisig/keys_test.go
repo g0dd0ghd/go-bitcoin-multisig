@@ -1,7 +1,7 @@
 package multisig
 
 import (
-	"github.com/chainx-org/go-bitcoin-multisig/btcutils"
+	"github.com/g0dd0ghd/go-bitcoin-multisig/btcutils"
 
 	"encoding/hex"
 	"testing"

@@ -2,8 +2,8 @@
 package multisig
 
 import (
+	"github.com/g0dd0ghd/go-bitcoin-multisig/btcutils"
 	"github.com/prettymuchbryce/hellobitcoin/base58check"
-	"github.com/chainx-org/go-bitcoin-multisig/btcutils"
 
 	"bytes"
 	"encoding/binary"
@@ -14,7 +14,7 @@ import (
 	"strings"
 )
 
-//OutputSpend formats and prints relevant outputs to the user.
+// OutputSpend formats and prints relevant outputs to the user.
 func OutputSpend(flagPrivateKeys string, flagDestination string, flagRedeemScript string, flagInputTx string, flagAmount int) {
 	finalTransactionHex := generateSpend(flagPrivateKeys, flagDestination, flagRedeemScript, flagInputTx, flagAmount)
 	//Output final transaction
