@@ -4,6 +4,7 @@ package multisig
 import (
 	"github.com/g0dd0ghd/go-bitcoin-multisig/btcutils"
 	"github.com/prettymuchbryce/hellobitcoin/base58check"
+	secp256k1 "github.com/btccom/secp256k1-go/secp256k1"
 
 	"bytes"
 	"encoding/binary"
@@ -99,12 +100,22 @@ func signMultisigTransaction(rawTransaction []byte, orderedPrivateKeys [][]byte,
 	if err != nil {
 		return nil, err
 	}
+	ctx, err := secp256k1.ContextCreate(secp256k1.ContextSign | secp256k1.ContextVerify)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	//Generate signatures for each provided key
 	signatures := make([][]byte, len(orderedPrivateKeys))
 	for i, privateKey := range orderedPrivateKeys {
-		signatures[i], err = btcutils.NewSignature(rawTransaction, privateKey)
+		signaturesTemp, err := btcutils.NewSignature(rawTransaction, privateKey)
 		if err != nil {
 			return nil, err
+		}
+		_, signaturesCompact, err := secp256k1.EcdsaSignatureSerializeCompact(ctx, signaturesTemp)
+		signatures[i] = signaturesCompact
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
 	//redeemScript length. To allow redeemScript > 255 bytes, we use OP_PUSHDATA2 and use two bytes to specify length

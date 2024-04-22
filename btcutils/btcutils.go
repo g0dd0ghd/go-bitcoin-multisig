@@ -15,7 +15,7 @@ import (
 	mathrand "math/rand"
 	"time"
 
-	secp256k1 "github.com/toxeus/go-secp256k1"
+	secp256k1 "github.com/btccom/secp256k1-go/secp256k1"
 	"golang.org/x/crypto/ripemd160"
 )
 
@@ -75,17 +75,17 @@ func NewPrivateKey() []byte {
 // Unfortunately golang ecdsa package does not include a
 // secp256k1 curve as this is fairly specific to Bitcoin.
 // Using toxeus/go-secp256k1 which wraps the official bitcoin/c-secp256k1 with cgo.
-func NewPublicKey(privateKey []byte) ([]byte, error) {
-	var privateKey32 [32]byte
+func NewPublicKey(privateKey []byte) (*secp256k1.PublicKey, error) {
+	var privateKey32 []byte
 	for i := 0; i < 32; i++ {
 		privateKey32[i] = privateKey[i]
 	}
-	secp256k1.Start()
-	publicKey, success := secp256k1.Pubkey_create(privateKey32, false)
-	if !success {
-		return nil, errors.New("Failed to create public key from provided private key.")
+	// secp256k1.Start()
+	ctx, err := secp256k1.ContextCreate(secp256k1.ContextSign | secp256k1.ContextVerify)
+	_, publicKey, err := secp256k1.EcPubkeyCreate(ctx, privateKey32)
+	if err != nil {
+		panic(err)
 	}
-	secp256k1.Stop()
 	return publicKey, nil
 }
 
@@ -267,18 +267,23 @@ func NewRawTransaction(inputTxHash string, satoshis int, scriptSig []byte, scrip
 }
 
 // NewSignature generates a ECDSA signature given the raw transaction and privateKey to sign with
-func NewSignature(rawTransaction []byte, privateKey []byte) ([]byte, error) {
+func NewSignature(rawTransaction []byte, privateKey []byte) (*secp256k1.EcdsaSignature, error) {
 	//Start secp256k1
-	secp256k1.Start()
-	var privateKey32 [32]byte
+	//secp256k1.Start()
+	ctx, err := secp256k1.ContextCreate(secp256k1.ContextSign | secp256k1.ContextVerify)
+	var privateKey32 []byte
 	for i := 0; i < 32; i++ {
 		privateKey32[i] = privateKey[i]
 	}
 	//Get the raw public key
-	publicKey, success := secp256k1.Pubkey_create(privateKey32, false)
-	if !success {
-		return nil, errors.New("Failed to create public key from provided private key.")
+	//publicKey, success := secp256k1.Pubkey_create(privateKey32, false)
+	_, publicKey, err := secp256k1.EcPubkeyCreate(ctx, privateKey32)
+	if err != nil {
+		panic(err)
 	}
+	// if !success {
+	// 	return nil, errors.New("Failed to create public key from provided private key.")
+	// }
 	//Hash the raw transaction twice with SHA256 before the signing
 	shaHash := sha256.New()
 	shaHash.Write(rawTransaction)
@@ -286,19 +291,18 @@ func NewSignature(rawTransaction []byte, privateKey []byte) ([]byte, error) {
 	shaHash2 := sha256.New()
 	shaHash2.Write(hash)
 	rawTransactionHashed := shaHash2.Sum(nil)
-	var rawTransactionHashed2 [32]byte
+	var rawTransactionHashed2 []byte
 	copy(rawTransactionHashed2[:], rawTransactionHashed[:len(rawTransactionHashed2)])
 	//Sign the raw transaction
-	signedTransaction, success := secp256k1.Sign(rawTransactionHashed2, privateKey32, newNonce())
-	if !success {
+	_, signature, err := secp256k1.EcdsaSign(ctx, rawTransactionHashed2, privateKey32)
+	if err != nil {
 		return nil, errors.New("Failed to sign transaction")
-	}
+	}	
 	//Verify that it worked.
-	verified := secp256k1.Verify(rawTransactionHashed2, signedTransaction, publicKey)
-	if !verified {
+	verified, err := secp256k1.EcdsaVerify(ctx, signature, rawTransactionHashed2, publicKey)
+	if verified != 1 {
 		return nil, errors.New("Failed to verify signed transaction")
 	}
 	//Stop secp256k1 and return signature
-	secp256k1.Stop()
-	return signedTransaction, nil
+	return signature, nil
 }

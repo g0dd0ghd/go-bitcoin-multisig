@@ -4,6 +4,7 @@ package multisig
 import (
 	"github.com/g0dd0ghd/go-bitcoin-multisig/btcutils"
 	"github.com/prettymuchbryce/hellobitcoin/base58check"
+	secp256k1 "github.com/btccom/secp256k1-go/secp256k1"
 
 	"bytes"
 	"encoding/hex"
@@ -41,7 +42,17 @@ func generateFund(flagPrivateKey string, flagInputTx string, flagAmount int, fla
 	if err != nil {
 		log.Fatal(err)
 	}
-	publicKeyHash, err := btcutils.Hash160(publicKey)
+
+	ctx, err := secp256k1.ContextCreate(secp256k1.ContextSign | secp256k1.ContextVerify)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, pubKeyByte, err := secp256k1.EcPubkeySerialize(ctx, publicKey, secp256k1.EcCompressed)
+	if err != nil {
+		log.Fatal(err)
+	}
+	publicKeyHash, err := btcutils.Hash160(pubKeyByte)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -95,15 +106,32 @@ func signP2PKHTransaction(rawTransaction []byte, privateKey []byte, scriptPubKey
 	if err != nil {
 		return nil, err
 	}
+
+	ctx, err := secp256k1.ContextCreate(secp256k1.ContextSign | secp256k1.ContextVerify)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	//Convert secp256k1 signature to compact format (64 byte)
+	_, signatureCompact, err := secp256k1.EcdsaSignatureSerializeCompact(ctx, signature)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, pubKeyByte, err := secp256k1.EcPubkeySerialize(ctx, publicKey, secp256k1.EcCompressed)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	//signatureLength is +1 to add hashCodeType
-	signatureLength := byte(len(signature) + 1)
+	signatureLength := byte(len(signatureCompact) + 1)
 	//Create scriptSig
 	var buffer bytes.Buffer
 	buffer.WriteByte(signatureLength)
-	buffer.Write(signature)
+	buffer.Write(signatureCompact)
 	buffer.WriteByte(hashCodeType[0])
-	buffer.WriteByte(byte(len(publicKey)))
-	buffer.Write(publicKey)
+	buffer.WriteByte(byte(len(pubKeyByte)))
+	buffer.Write(pubKeyByte)
 	scriptSig := buffer.Bytes()
 	//Finally create transaction with actual scriptSig
 	signedRawTransaction, err := btcutils.NewRawTransaction(inputTx, amount, scriptSig, scriptPubKey)

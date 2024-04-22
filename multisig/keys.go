@@ -4,7 +4,7 @@ package multisig
 import (
 	"github.com/g0dd0ghd/go-bitcoin-multisig/btcutils"
 	"github.com/prettymuchbryce/hellobitcoin/base58check"
-
+	secp256k1 "github.com/btccom/secp256k1-go/secp256k1"
 	"encoding/hex"
 	"fmt"
 	"log"
@@ -69,10 +69,19 @@ func generateKeys(flagKeyCount int) ([]string, []string, []string) {
 		if err != nil {
 			log.Fatal(err)
 		}
+		
+		ctx, err := secp256k1.ContextCreate(secp256k1.ContextSign | secp256k1.ContextVerify)
+		if err != nil {
+			log.Fatal(err)
+		}
+		_, pubKeyByte, err := secp256k1.EcPubkeySerialize(ctx, publicKey, secp256k1.EcCompressed)
+		if err != nil {
+			log.Fatal(err)
+		}
 		//Get hex encoded version of public key
-		publicKeyHexs[i] = hex.EncodeToString(publicKey)
+		publicKeyHexs[i] = hex.EncodeToString(pubKeyByte)
 		//Get public address by hashing with SHA256 and RIPEMD160 and base58 encoding with mainnet prefix 00
-		publicKeyHash, err := btcutils.Hash160(publicKey)
+		publicKeyHash, err := btcutils.Hash160(pubKeyByte)
 		if err != nil {
 			log.Fatal(err)
 		}
