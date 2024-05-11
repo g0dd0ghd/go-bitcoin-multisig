@@ -3,7 +3,7 @@ package multisig
 import (
 	"testing"
 
-	"github.com/g0dd0ghd/go-bitcoin-multisig/testutils"
+	"go-multisig/testutils"
 )
 
 func TestGenerateAddress(t *testing.T) {

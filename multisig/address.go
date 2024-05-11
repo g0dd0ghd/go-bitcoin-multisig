@@ -1,11 +1,11 @@
-// Package multisig contains the main starting threads for each of the subcommands for go-bitcoin-multisig.
+// Package multisig contains the main starting threads for each of the subcommands for go-multisig.
 //
 // address.go - Generating P2SH addresses.
 package multisig
 
 import (
-	"github.com/g0dd0ghd/go-bitcoin-multisig/btcutils"
 	"github.com/prettymuchbryce/hellobitcoin/base58check"
+	"go-multisig/btcutils"
 
 	"encoding/csv"
 	"encoding/hex"
@@ -50,7 +50,7 @@ Keep private and provide this to redeem multisig balance later.
 	)
 }
 
-// generateAddress is the high-level logic for creating P2SH multisig addresses with the 'go-bitcoin-multisig address' subcommand.
+// generateAddress is the high-level logic for creating P2SH multisig addresses with the 'go-multisig address' subcommand.
 // Takes flagM (number of keys required to spend), flagN (total number of keys)
 // and flagPublicKeys (comma separated list of N public keys) as arguments.
 func generateAddress(flagM int, flagN int, flagPublicKeys string) (string, string) {

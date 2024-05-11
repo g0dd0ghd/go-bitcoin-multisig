@@ -2,9 +2,10 @@
 package multisig
 
 import (
-	"github.com/g0dd0ghd/go-bitcoin-multisig/btcutils"
-	"github.com/prettymuchbryce/hellobitcoin/base58check"
+	"go-multisig/btcutils"
+
 	secp256k1 "github.com/btccom/secp256k1-go/secp256k1"
+	"github.com/prettymuchbryce/hellobitcoin/base58check"
 
 	"bytes"
 	"encoding/binary"
@@ -31,7 +32,7 @@ Broadcast this transaction to spend your multisig P2SH funds.
 	)
 }
 
-// generateSpend is the high-level logic for spending from a P2SH multisig address with the 'go-bitcoin-multisig spend' subcommand.
+// generateSpend is the high-level logic for spending from a P2SH multisig address with the 'go-multisig spend' subcommand.
 // Takes flagPrivateKeys (comma separated list of M private keys), flagDestination (destination address of spent funds),
 // flagRedeemScript (redeemScript that matches P2SH script), flagInputTx (input transaction hash of P2SH input to spend)
 // and flagAmount (amount in Satoshis to send, with balance left over from input being used as transaction fee) as arguments.

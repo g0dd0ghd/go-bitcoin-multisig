@@ -1,4 +1,4 @@
-// Package btcutils contains a number of useful Bitcoin related functions originally used in the go-bitcoin-multisig
+// Package btcutils contains a number of useful Bitcoin related functions originally used in the go-multisig
 // project but useful in any general Bitcoin project.
 package btcutils
 
@@ -24,8 +24,8 @@ import (
 // **Should never be turned on in production. Limit to use in tests only.**
 var SetFixedNonce bool
 
-//Fixed nonce value for repeatable testing.
-//We declare var and not const because Go slices are mutable and cannot be const, but we use fixedNonce like a constant.
+// Fixed nonce value for repeatable testing.
+// We declare var and not const because Go slices are mutable and cannot be const, but we use fixedNonce like a constant.
 var FIXED_NONCE = [...]byte{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31}
 
 func randInt(min int, max int) uint8 {
@@ -297,7 +297,7 @@ func NewSignature(rawTransaction []byte, privateKey []byte) (*secp256k1.EcdsaSig
 	_, signature, err := secp256k1.EcdsaSign(ctx, rawTransactionHashed2, privateKey32)
 	if err != nil {
 		return nil, errors.New("Failed to sign transaction")
-	}	
+	}
 	//Verify that it worked.
 	verified, err := secp256k1.EcdsaVerify(ctx, signature, rawTransactionHashed2, publicKey)
 	if verified != 1 {

@@ -2,12 +2,13 @@
 package multisig
 
 import (
-	"github.com/g0dd0ghd/go-bitcoin-multisig/btcutils"
-	"github.com/prettymuchbryce/hellobitcoin/base58check"
-	secp256k1 "github.com/btccom/secp256k1-go/secp256k1"
 	"encoding/hex"
 	"fmt"
+	"go-multisig/btcutils"
 	"log"
+
+	secp256k1 "github.com/btccom/secp256k1-go/secp256k1"
+	"github.com/prettymuchbryce/hellobitcoin/base58check"
 )
 
 // OutputKeys formats and prints relevant outputs to the user.
@@ -53,7 +54,7 @@ func OutputKeys(flagKeyCount int, flagConcise bool) {
 	}
 }
 
-// generateKeys is the high-level logic for generating public/private key pairs with the 'go-bitcoin-multisig keys' subcommand.
+// generateKeys is the high-level logic for generating public/private key pairs with the 'go-multisig keys' subcommand.
 // Takes flagCount (desired number of key pairs) and flagConcise (true hides warnings and helpful messages for conciseness)
 // as arguments.
 func generateKeys(flagKeyCount int) ([]string, []string, []string) {
@@ -69,7 +70,7 @@ func generateKeys(flagKeyCount int) ([]string, []string, []string) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		
+
 		ctx, err := secp256k1.ContextCreate(secp256k1.ContextSign | secp256k1.ContextVerify)
 		if err != nil {
 			log.Fatal(err)

@@ -1,8 +1,8 @@
 package multisig
 
 import (
-	"github.com/g0dd0ghd/go-bitcoin-multisig/btcutils"
-	"github.com/g0dd0ghd/go-bitcoin-multisig/testutils"
+	"go-multisig/btcutils"
+	"go-multisig/testutils"
 
 	"reflect"
 	"testing"

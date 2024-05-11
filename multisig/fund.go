@@ -2,9 +2,10 @@
 package multisig
 
 import (
-	"github.com/g0dd0ghd/go-bitcoin-multisig/btcutils"
-	"github.com/prettymuchbryce/hellobitcoin/base58check"
+	"go-multisig/btcutils"
+
 	secp256k1 "github.com/btccom/secp256k1-go/secp256k1"
+	"github.com/prettymuchbryce/hellobitcoin/base58check"
 
 	"bytes"
 	"encoding/hex"
@@ -28,7 +29,7 @@ Broadcast this transaction to fund your P2SH address.
 	)
 }
 
-// generateFund is the high-level logic for funding any P2SH address with the 'go-bitcoin-multisig fund' subcommand.
+// generateFund is the high-level logic for funding any P2SH address with the 'go-multisig fund' subcommand.
 // Takes flagPrivateKey (private key of input Bitcoins to fund with), flagInputTx (input transaction hash of
 // Bitcoins to fund with), flagAmount (amount in Satoshis to send, with balance left over from input being used
 // as transaction fee) and flagP2SHDestination (destination P2SH multisig address which is being funded) as arguments.

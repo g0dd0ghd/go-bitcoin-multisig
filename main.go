@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/g0dd0ghd/go-bitcoin-multisig/multisig"
+	"go-multisig/multisig"
 
 	"os"
 
@@ -10,7 +10,7 @@ import (
 
 // Kingpin configurations for command-line subcommands and their respective flags.
 var (
-	app = kingpin.New("go-bitcoin-multisig", "A Bitcoin multisig transaction builder built in Go")
+	app = kingpin.New("go-multisig", "A Bitcoin multisig transaction builder built in Go")
 
 	//keys subcommand
 	cmdKeys        = app.Command("keys", "Generate public/private key pairs valid for use on Bitcoin network. **PSEUDORANDOM AND FOR DEMONSTRATION PURPOSES ONLY. DO NOT USE IN PRODUCTION.**")
